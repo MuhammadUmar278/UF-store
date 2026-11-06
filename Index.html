@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UF Store — Online Shopping in Pakistan</title>
+<meta name="description" content="UF Store: quality products with cash on delivery. Cash on delivery across Pakistan.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <span class="logo" onclick="window.scrollTo(0,0)">🛍️ UF Store</span>
+  <input id="q" placeholder="Search products..." oninput="render()">
+  <button id="bOrders" style="display:none" onclick="openMyOrders()">My Orders</button>
+  <button id="bAuth" onclick="openAuth()">Login / Sign Up</button>
+  <button id="bAdmin" style="display:none" onclick="openAdmin()">Admin<span class="badge" id="nc">0</span></button>
+  <button onclick="openCart()">🛒<span class="badge" id="cc">0</span></button>
+</header>
+
+<div class="wrap">
+  <div class="hero"><h1>UF Store</h1><p>Quality products • Cash on Delivery • Delivery all over Pakistan</p></div>
+  <div class="grid" id="grid"><p>Loading...</p></div>
+</div>
+<footer>© <span id="yr"></span> UF Store. All rights reserved.</footer>
+
+<!-- Auth -->
+<div class="modal" id="mAuth"><div class="box">
+  <span class="x" onclick="cl('mAuth')">×</span>
+  <h3 id="aT">Login</h3>
+  <input id="aN" placeholder="Full name" style="display:none">
+  <input id="aE" type="email" placeholder="Email" autocomplete="email">
+  <input id="aP" type="password" placeholder="Password (min 6)" autocomplete="current-password">
+  <button class="btn" onclick="doAuth()">Continue</button>
+  <p style="margin-top:10px"><span class="link" id="aS" onclick="toggleAuth()">Account nahi hai? Sign Up</span>
+  &nbsp;|&nbsp;<span class="link" onclick="resetPass()">Password bhool gaye?</span><br><span class="link" onclick="resendVerify()">Verification email dobara bhejein</span></p>
+</div></div>
+
+<!-- Cart -->
+<div class="modal" id="mCart"><div class="box">
+  <span class="x" onclick="cl('mCart')">×</span>
+  <h3>Your Cart</h3><div id="cartL"></div>
+  <div id="co" style="display:none">
+    <h4 style="margin-top:12px">Delivery Details</h4>
+    <input id="cN" placeholder="Name"><input id="cPh" placeholder="Phone (03xx...)">
+    <input id="cCity" placeholder="City"><textarea id="cA" rows="2" placeholder="Full address"></textarea>
+    <select id="cPay" onchange="payChg()">
+      <option value="COD">Cash on Delivery</option>
+      <option value="Easypaisa">Easypaisa (advance)</option>
+      <option value="JazzCash">JazzCash (advance)</option>
+    </select>
+    <div id="payBox" style="display:none"><small id="payInfo"></small>
+      <input id="cTid" placeholder="Transaction ID (TID)"></div>
+    <button class="btn" id="btnOrder" onclick="placeOrder()">Place Order</button>
+  </div>
+</div></div>
+
+<!-- My orders -->
+<div class="modal" id="mMy"><div class="box">
+  <span class="x" onclick="cl('mMy')">×</span><h3>My Orders</h3><div id="myL"></div>
+</div></div>
+
+<!-- Admin -->
+<div class="modal" id="mAdmin"><div class="box w">
+  <span class="x" onclick="cl('mAdmin')">×</span><h3>Admin Panel</h3>
+  <div class="tabs"><button class="btn" onclick="tab('p')">Products</button><button class="btn s" onclick="tab('o')">Orders</button></div>
+  <div id="tP">
+    <input id="pN" placeholder="Product name"><input id="pPr" type="number" placeholder="Price (Rs)">
+    <textarea id="pD" rows="2" placeholder="Description"></textarea>
+    <input id="pI" type="file" accept="image/*">
+    <button class="btn" id="btnAdd" onclick="addProduct()">Add Product</button>
+    <div id="pL" style="margin-top:12px"></div>
+  </div>
+  <div id="tO" style="display:none"></div>
+</div></div>
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="Script.js"></script>
+</body>
+</html>
