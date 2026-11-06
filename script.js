@@ -9,11 +9,10 @@ const CFG = {
     appId: "1:85123845058:web:3f256b273e2e6a63be645b"
   },
   ADMIN_EMAIL: "umerfaisal278@gmail.com",   // jis email se admin banoge (firestore.rules mein bhi same likhna)
-  WHATSAPP: "923360896919",              // order ka WhatsApp isi number par jayega: 03360896919              // 92 se shuru, bina +
-  PAY_NUMBER: "03360896919",             // Easypaisa / JazzCash number             // Easypaisa / JazzCash number
+  WHATSAPP: "923001234567",              // 92 se shuru, bina +
+  PAY_NUMBER: "03001234567",             // Easypaisa / JazzCash number
   PAY_TITLE: "Account title",
-  EMAILJS: { publicKey: "", serviceId: "", templateId: "" },  // EMAIL BHARNA LAZMI HAI warna order email nahi aayegi - neeche tareeqa dekhein
-  NOTIFY_EMAIL: "umerfaisal278@gmail.com", // order ki email isi par aayegi
+  EMAILJS: { publicKey: "dekLOVGTjCsH3wpJC", serviceId: "service_yq924f6", templateId: "template_52wptzx" }  // optional, khali chhorain to email skip
 };
 /* ================================================================ */
 
@@ -30,41 +29,19 @@ const isAdmin = () => me && me.email === CFG.ADMIN_EMAIL.toLowerCase() && me.ema
 $('yr').textContent = new Date().getFullYear();
 
 /* ---------- Products (live, shared) ---------- */
-db.collection('products').orderBy('created', 'desc').limit(30).onSnapshot(s => {
+db.collection('products').orderBy('created', 'desc').onSnapshot(s => {
   products = s.docs.map(d => ({id: d.id, ...d.data()})); render(); if ($('mAdmin').classList.contains('on')) listProducts();
 }, e => { $('grid').innerHTML = '<p>Products load nahi hue. Firebase settings check karein.</p>'; console.error(e) });
 
-const firstImg = p => (p.imgs && p.imgs[0]) || p.img || '';
-const imgCount = p => (p.imgs && p.imgs.length) || (p.img ? 1 : 0);
 function render() {
   const q = $('q').value.toLowerCase();
-  $('grid').innerHTML = products.filter(p => (p.name || '').toLowerCase().includes(q)).map(p => {
-    const fi = firstImg(p), n = imgCount(p);
-    return `
-    <div class="card">${p.soldOut ? '<span class="sold">Sold out</span>' : ''}${n > 1 ? `<span class="sold" style="left:auto;right:8px;background:#212121">📷 ${n} pics</span>` : ''}
-    <div class="img" onclick="openProduct('${p.id}')" style="${fi ? `background-image:url(${fi})` : ''}">${fi ? '' : '⌚'}</div>
-    <div class="in"><h4 onclick="openProduct('${p.id}')" style="cursor:pointer">${esc(p.name)}</h4><small>${esc((p.desc || '').slice(0, 70))}${(p.desc || '').length > 70 ? '...' : ''}</small>
+  $('grid').innerHTML = products.filter(p => (p.name || '').toLowerCase().includes(q)).map(p => `
+    <div class="card">${p.soldOut ? '<span class="sold">Sold out</span>' : ''}
+    <div class="img" style="${p.img ? `background-image:url(${p.img})` : ''}">${p.img ? '' : '⌚'}</div>
+    <div class="in"><h4>${esc(p.name)}</h4><small>${esc(p.desc)}</small>
     <div class="price">Rs. ${Number(p.price).toLocaleString()}</div>
-    <button class="btn" onclick="openProduct('${p.id}')">View Details</button>
-    <button class="btn s" style="margin-top:6px" ${p.soldOut ? 'disabled' : ''} onclick="addCart('${p.id}')">${p.soldOut ? 'Out of stock' : 'Add to Cart'}</button></div></div>`}).join('') || '<p>Koi product nahi mila.</p>';
+    <button class="btn" ${p.soldOut ? 'disabled' : ''} onclick="addCart('${p.id}')">${p.soldOut ? 'Out of stock' : 'Add to Cart'}</button></div></div>`).join('') || '<p>Koi product nahi mila.</p>';
   $('cc').textContent = cart.reduce((a, c) => a + c.qty, 0);
-}
-/* ---------- Product Detail (gallery + full description) ---------- */
-let curP = null, curImg = 0;
-function openProduct(id) {
-  curP = products.find(x => x.id === id); if (!curP) return; curImg = 0; showProduct();
-}
-function showProduct() {
-  const p = curP, imgs = (p.imgs && p.imgs.length ? p.imgs : (p.img ? [p.img] : []));
-  $('pdImg').src = imgs[curImg] || '';
-  $('pdImg').style.display = imgs.length ? '' : 'none';
-  $('pdThumbs').innerHTML = imgs.map((im, i) => `<img src="${im}" onclick="curImg=${i};showProduct()" style="width:60px;height:60px;object-fit:cover;border-radius:6px;cursor:pointer;border:${i === curImg ? '2px solid #f85606' : '1px solid #ddd'}">`).join('');
-  $('pdName').textContent = p.name || '';
-  $('pdPrice').textContent = 'Rs. ' + Number(p.price).toLocaleString();
-  $('pdDesc').textContent = p.desc || 'Is product ki description nahi likhi gayi.';
-  $('pdAdd').disabled = !!p.soldOut;
-  $('pdAdd').textContent = p.soldOut ? 'Out of stock' : 'Add to Cart';
-  op('mProduct');
 }
 
 /* ---------- Auth ---------- */
@@ -87,7 +64,7 @@ function toggleAuth() {
   $('aN').style.display = signup ? '' : 'none';
   $('aS').textContent = signup ? 'Pehle se account hai? Login' : 'Account nahi hai? Sign Up';
 }
-const errMsg = c => ({'auth/configuration-not-found': 'Firebase me Authentication ON nahi hai', 'auth/email-already-in-use': 'Ye email pehle se registered hai', 'auth/invalid-credential': 'Email ya password ghalat hai',
+const errMsg = c => ({'auth/email-already-in-use': 'Ye email pehle se registered hai', 'auth/invalid-credential': 'Email ya password ghalat hai',
   'auth/wrong-password': 'Password ghalat hai', 'auth/user-not-found': 'Account nahi mila', 'auth/weak-password': 'Password kamzor hai (min 6)',
   'auth/invalid-email': 'Email sahi nahi', 'auth/too-many-requests': 'Bohat koshishein, thori der baad try karein'}[c] || 'Masla aaya: ' + c);
 async function doAuth() {
@@ -97,21 +74,12 @@ async function doAuth() {
       if (!name) return toast('Naam likhein');
       const c = await auth.createUserWithEmailAndPassword(email, pass);
       await c.user.updateProfile({displayName: name});
-      try { await db.collection('users').doc(c.user.uid).set({name, email: email.toLowerCase(), created: firebase.firestore.FieldValue.serverTimestamp()}); } catch (e) { console.warn('users save failed:', e); }
-      try { await c.user.sendEmailVerification(); } catch (e) { console.warn('verification failed:', e); }
+      await db.collection('users').doc(c.user.uid).set({name, email: email.toLowerCase(), created: firebase.firestore.FieldValue.serverTimestamp()});
+      await c.user.sendEmailVerification();
       toast('Account ban gaya! Email verify karne ka link bhej diya gaya hai (spam bhi check karein).');
-    } else {
-      const c = await auth.signInWithEmailAndPassword(email, pass);
-      if (!c.user.emailVerified) { try { await c.user.sendEmailVerification(); } catch {} toast('Email verify nahi hai - verification link dobara bhej diya hai.'); }
-      else toast('Welcome!');
-    }
+    } else { await auth.signInWithEmailAndPassword(email, pass); toast('Welcome!') }
     cl('mAuth');
   } catch (e) { toast(errMsg(e.code)) }
-}
-async function resendVerify() {
-  const email = $('aE').value.trim(), pass = $('aP').value;
-  if (!email || !pass) return toast('Pehle email aur password likhein');
-  try { const c = await auth.signInWithEmailAndPassword(email, pass); await c.user.sendEmailVerification(); toast('Verification link dobara bhej diya'); } catch (e) { toast(errMsg(e.code)) }
 }
 async function resetPass() {
   const email = $('aE').value.trim(); if (!email) return toast('Pehle email likhein');
@@ -157,11 +125,10 @@ async function placeOrder() {
   } catch (e) { $('btnOrder').disabled = false; return toast('Order save nahi hua, dobara try karein') }
   $('btnOrder').disabled = false;
   const text = items.map(i => `• ${i.name} × ${i.qty} = Rs.${i.price * i.qty}`).join('\n');
-  if (CFG.EMAILJS.publicKey) emailjs.send(CFG.EMAILJS.serviceId, CFG.EMAILJS.templateId, {to_email: CFG.NOTIFY_EMAIL, order_id: oid, name, phone, email: me.email, address: `${addr}, ${city}`, items: text, total, payment: pay + (tid ? ' TID: ' + tid : '')}).then(() => toast('Order place ho gaya - aap ko email/WhatsApp par notification aa jayegi')).catch(e => { console.error(e); toast('Order place ho gaya - email setup baqi hai, EmailJS check karein'); });
-  else toast('Order place ho gaya - email notification ke liye EmailJS setup karein (SETUP.md dekhein)');
+  if (CFG.EMAILJS.publicKey) emailjs.send(CFG.EMAILJS.serviceId, CFG.EMAILJS.templateId, {order_id: oid, name, phone, email: me.email, address: `${addr}, ${city}`, items: text, total, payment: pay + (tid ? ' TID: ' + tid : '')}).catch(console.error);
   cart = []; saveCart(); render(); cl('mCart');
   const msg = `🛒 New Order ${oid} — UF Store\nName: ${name}\nPhone: ${phone}\nAddress: ${addr}, ${city}\n\n${text}\n\nTotal: Rs.${total}\nPayment: ${pay}${tid ? ' (TID ' + tid + ')' : ''}`;
-  if (confirm(`Order ${oid} place ho gaya ✅\n\nAdmin ko WhatsApp par order bhejna hai?\n(Admin number: 03360896919)`)) window.open(`https://wa.me/${CFG.WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+  if (confirm(`Order ${oid} place ho gaya ✅\n\nTezi se confirm karwane ke liye WhatsApp par bhejna chahenge?`)) window.open(`https://wa.me/${CFG.WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 async function openMyOrders() {
   op('mMy'); $('myL').innerHTML = 'Loading...';
@@ -184,34 +151,28 @@ function listProducts() {
 const toggleSold = (id, v) => db.collection('products').doc(id).update({soldOut: v}).catch(() => toast('Permission denied'));
 function delP(id) { if (confirm('Delete karein?')) db.collection('products').doc(id).delete().catch(() => toast('Permission denied')) }
 function addProduct() {
-  const name = $('pN').value.trim(), price = +$('pPr').value, desc = $('pD').value.trim(), files = [...$('pI').files].slice(0, 4);
+  const name = $('pN').value.trim(), price = +$('pPr').value, desc = $('pD').value.trim(), f = $('pI').files[0];
   if (!name || !price) return toast('Naam aur price zaroori hai');
-  if (!desc) return toast('Description bhi likhein - customer ko detail chahiye hogi');
-  if (files.length > 4) return toast('Max 4 pics select karein');
-  const save = async imgs => {
+  const save = async img => {
     try {
-      await db.collection('products').add({name, price, desc, imgs, img: imgs[0] || '', soldOut: false, created: firebase.firestore.FieldValue.serverTimestamp()});
-      ['pN', 'pPr', 'pD', 'pI'].forEach(i => $(i).value = ''); toast('Product add ho gayi ✅ (' + imgs.length + ' pics)');
+      await db.collection('products').add({name, price, desc, img, soldOut: false, created: firebase.firestore.FieldValue.serverTimestamp()});
+      ['pN', 'pPr', 'pD', 'pI'].forEach(i => $(i).value = ''); toast('Product add ho gayi ✅');
     } catch (e) { toast('Add nahi hui: ' + e.code) }
     $('btnAdd').disabled = false;
   };
   $('btnAdd').disabled = true;
-  if (!files.length) return save([]);
-  toast('Pics compress ho rahi hain, thora wait karein...');
-  const compressOne = f => new Promise(res => {
-    const r = new FileReader();
-    r.onload = e => {
-      const im = new Image();
-      im.onload = () => {
-        const s = Math.min(1, 400 / Math.max(im.width, im.height)), c = document.createElement('canvas');
-        c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-        res(c.toDataURL('image/jpeg', .6));
-      };
-      im.src = e.target.result;
+  if (!f) return save('');
+  const r = new FileReader();
+  r.onload = e => {
+    const im = new Image();
+    im.onload = () => {
+      const s = Math.min(1, 500 / Math.max(im.width, im.height)), c = document.createElement('canvas');
+      c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+      save(c.toDataURL('image/jpeg', .72));
     };
-    r.readAsDataURL(f);
-  });
-  Promise.all(files.map(compressOne)).then(save);
+    im.src = e.target.result;
+  };
+  r.readAsDataURL(f);
 }
 function listOrders() {
   $('tO').innerHTML = adminOrders.map(o => `<div class="row" style="align-items:flex-start"><span><b>${o.id}</b> <small>${o.created ? o.created.toDate().toLocaleString() : ''}</small><br>
@@ -221,3 +182,4 @@ function listOrders() {
 }
 const setSt = (id, s) => db.collection('orders').doc(id).update({status: s}).catch(() => toast('Permission denied'));
 render();
+
