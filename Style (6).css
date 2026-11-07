@@ -1,0 +1,20 @@
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:#f6f7f9;color:#1a1a1a}
+header{position:sticky;top:0;z-index:10;background:#111;display:flex;gap:12px;align-items:center;padding:12px 18px;flex-wrap:wrap;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.logo{color:#fff;font-weight:800;letter-spacing:2px;font-size:20px;cursor:pointer}.logo::after{content:" KARACHI";color:#f85606;font-size:10px;letter-spacing:1px}
+header input{flex:1;min-width:180px;padding:11px 14px;border-radius:25px;border:0;outline:none;background:#fff}
+header button{background:#fff;border:0;padding:10px 16px;border-radius:25px;cursor:pointer;font-weight:600}.cartbtn{background:#f85606!important;color:#fff!important}
+.badge{background:#f85606;color:#fff;border-radius:50%;padding:2px 7px;font-size:12px;margin-left:5px}.cartbtn .badge{background:#fff;color:#f85606}
+.wrap{max-width:1150px;margin:auto;padding:18px}
+.hero{background:linear-gradient(120deg,#111,#3a1c05);color:#fff;border-radius:16px;padding:32px 26px;margin-bottom:18px}.hero h1{margin:0 0 8px;font-size:32px}.hero p{opacity:.85;margin:0}.hero-badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.hero-badges span{background:rgba(255,255,255,.15);padding:7px 12px;border-radius:20px;font-size:13px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin:6px 0 14px}.toolbar select{padding:9px;border-radius:8px;border:1px solid #ddd}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07);position:relative;transition:.2s}.card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.12)}
+.card .img{height:230px;background:#eee center/cover;cursor:pointer}.card .in{padding:14px}.card h4{margin:0 0 6px;font-size:16px;cursor:pointer}.card small{color:#666;line-height:1.5;display:block;min-height:36px}.price{font-weight:800;font-size:18px;margin:10px 0;color:#111}
+.btn{background:#f85606;color:#fff;border:0;padding:12px;border-radius:8px;width:100%;cursor:pointer;font-weight:700;font-size:15px}.btn.s{background:#eee;color:#111}.btn.r{background:#ffecec;color:#c00}.btn:disabled{opacity:.5;cursor:not-allowed}
+.sold{position:absolute;top:10px;left:10px;background:#c00;color:#fff;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:700;z-index:2}
+.pics{position:absolute;top:10px;right:10px;background:#111;color:#fff;padding:5px 10px;border-radius:20px;font-size:12px;z-index:2}
+footer{text-align:center;padding:22px;color:#777;font-size:14px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:20px;z-index:50}.modal.on{display:flex}.box{background:#fff;border-radius:14px;padding:22px;width:100%;max-width:460px;position:relative;margin:auto}.box.w{max-width:680px}.x{position:absolute;right:16px;top:10px;font-size:26px;cursor:pointer}.box input,.box textarea,.box select{width:100%;padding:11px;margin:6px 0;border:1px solid #ddd;border-radius:8px;font-size:15px}.box textarea{resize:vertical}
+.link{color:#f85606;cursor:pointer;font-size:14px}.muted{color:#777;font-size:13px;line-height:1.5}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid #eee}.row .st{background:#e8f5e9;padding:4px 10px;border-radius:20px;font-size:12px}.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs .btn{width:auto}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 18px;border-radius:25px;display:none;z-index:100;max-width:90%;text-align:center}
+@media(max-width:600px){.hero h1{font-size:24px}header{padding:10px}.logo{font-size:17px}}
